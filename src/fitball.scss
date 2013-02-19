@@ -1,0 +1,31 @@
+@mixin gradient($type, $inner, $inner_width, $outer, $outer-width, $from, $to) {
+    background:-webkit-gradient($type, $inner, $inner_width, $outer, $outer-width, $from, $to);
+}
+
+body {
+    background: #CCC;
+    @include gradient(radial,center center,450,center center,0, from(#CCC), to(#FFF));
+}
+.vessel {
+    position:relative;
+    width:450px;
+    height:600px;
+    margin: 20px auto 0;
+    a {
+        position:absolute;
+        top:0;
+        left:0;
+        font-family: Microsoft YaHei;
+        color:#fff;
+        font-weight:bold;
+        text-decoration:none;
+        padding: 3px 6px;
+        color: black;
+        :hover {
+            border: 1px solid #eee; background: #000; 
+        };
+    }
+    .blue {color: blue;}
+    .red {color: red;}
+    .yellow {color: yellow;}
+}

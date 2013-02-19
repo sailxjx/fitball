@@ -1,0 +1,28 @@
+body {
+  background: #CCC;
+  background: -webkit-gradient(radial, center center, 450, center center, 0, from(#cccccc), to(white)); }
+
+.vessel {
+  position: relative;
+  width: 450px;
+  height: 600px;
+  margin: 20px auto 0; }
+  .vessel a {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-family: Microsoft YaHei;
+    color: #fff;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 3px 6px;
+    color: black; }
+    .vessel a :hover {
+      border: 1px solid #eee;
+      background: #000; }
+  .vessel .blue {
+    color: blue; }
+  .vessel .red {
+    color: red; }
+  .vessel .yellow {
+    color: yellow; }
