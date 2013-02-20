@@ -12,6 +12,7 @@ class fitball
     @mcList = [] # dom height/width/position list
     @length = 0
     @active = false # whether need to active mouse event
+    @animate = true # animate or stop
     @mouse = {}
     @lasta = 1
     @lastb = 1
@@ -56,7 +57,18 @@ class fitball
       e = window.event || e
       @mouse.x = (e.clientX - (@vessel.offsetLeft + @vessel.offsetWidth / 2)) / 5
       @mouse.y = (e.clientY - (@vessel.offsetTop + @vessel.offsetHeight / 2)) / 5
-    setInterval(@update, 30)
+    si = setInterval @update, 30
+    stay = false
+    window.onkeyup = (e)=>
+      e = window.event || e
+      kc = e.keyCode || e.keyCode
+      if kc == 32
+        if stay
+          si = setInterval @update, 30
+          stay = false
+        else
+          clearInterval(si)
+          stay = true
   update: =>
     a = b = c = 0
     mouse = @mouse

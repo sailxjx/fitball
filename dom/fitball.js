@@ -19,6 +19,7 @@
       this.mcList = [];
       this.length = 0;
       this.active = false;
+      this.animate = true;
       this.mouse = {};
       this.lasta = 1;
       this.lastb = 1;
@@ -63,7 +64,7 @@
     };
 
     fitball.prototype.goRoll = function() {
-      var fits, i, length, mcList, tag, _i,
+      var fits, i, length, mcList, si, stay, tag, _i,
         _this = this;
       this.fits = fits = this.vessel.getElementsByTagName('a');
       this.length = length = fits.length;
@@ -86,7 +87,22 @@
         _this.mouse.x = (e.clientX - (_this.vessel.offsetLeft + _this.vessel.offsetWidth / 2)) / 5;
         return _this.mouse.y = (e.clientY - (_this.vessel.offsetTop + _this.vessel.offsetHeight / 2)) / 5;
       };
-      return setInterval(this.update, 30);
+      si = setInterval(this.update, 30);
+      stay = false;
+      return window.onkeyup = function(e) {
+        var kc;
+        e = window.event || e;
+        kc = e.keyCode || e.keyCode;
+        if (kc === 32) {
+          if (stay) {
+            si = setInterval(_this.update, 30);
+            return stay = false;
+          } else {
+            clearInterval(si);
+            return stay = true;
+          }
+        }
+      };
     };
 
     fitball.prototype.update = function() {
