@@ -129,12 +129,12 @@
       this.si = setInterval(this.update, 30);
       stay = false;
       return window.onkeyup = function(e) {
-        var kc, si;
+        var kc;
         e = window.event || e;
         kc = e.keyCode || e.keyCode;
         if (kc === 32) {
           if (stay) {
-            si = setInterval(_this.update, 30);
+            _this.si = setInterval(_this.update, 30);
             return stay = false;
           } else {
             clearInterval(_this.si);

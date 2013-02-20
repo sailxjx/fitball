@@ -83,7 +83,7 @@ class fitball
       kc = e.keyCode || e.keyCode
       if kc == 32 #space key
         if stay
-          si = setInterval @update, 30
+          @si = setInterval @update, 30
           stay = false
         else
           clearInterval(@si)
