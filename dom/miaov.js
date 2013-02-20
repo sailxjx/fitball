@@ -119,7 +119,7 @@ function update()
 	}
 	
 	doPosition();
-	depthSort();
+	// depthSort();
 }
 
 function depthSort()
@@ -180,14 +180,14 @@ function positionAll()
 			return Math.random()<0.5?1:-1;
 		}
 	);
-	
+
 	for(i=0;i<aTmp.length;i++)
 	{
 		oFragment.appendChild(aTmp[i]);
 	}
-	
+
 	oDiv.appendChild(oFragment);
-	
+
 	for( var i=1; i<max+1; i++){
 		if( distr )
 		{
