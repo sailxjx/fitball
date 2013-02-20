@@ -5,4 +5,6 @@
 * render the 3D ball display with canvas
 * add areatext to fill in the words (done)
 * add space keybind to pause|continue the animate (done)
+* add diffrent font size (done)
 * add img|dom download button
+* add word seg functions

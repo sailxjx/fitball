@@ -7,6 +7,10 @@
 
     function fitball() {
       this.update = __bind(this.update, this);
+
+    }
+
+    fitball.prototype.init = function() {
       this.radius = 120;
       this.size = 250;
       this.tsSpeed = 10;
@@ -24,16 +28,30 @@
       this.lasta = 1;
       this.lastb = 1;
       this.trigs = {};
-    }
+      this.max = 0;
+      return this.min = 10000;
+    };
 
     fitball.prototype.roll = function() {
+      this.init();
       this.readSrc();
       this.initDoms();
+      this.unbindEvents();
       return this.goRoll();
     };
 
+    fitball.prototype.unbindEvents = function() {
+      this.vessel.onmouseover = null;
+      this.vessel.onmouseout = null;
+      this.vessel.onmousemove = null;
+      window.onkeyup = null;
+      if (typeof this.si !== 'undefined') {
+        return clearInterval(this.si);
+      }
+    };
+
     fitball.prototype.readSrc = function() {
-      var i, source, srcArr, srcStr, srcTxt, _i, _ref, _results;
+      var i, num, source, srcArr, srcStr, srcTxt, word, _i, _ref, _ref1, _results;
       source = document.getElementById('source');
       srcTxt = source.value;
       srcArr = srcTxt.split("\n");
@@ -43,28 +61,49 @@
         if (srcStr === "") {
           continue;
         } else {
-          _results.push(this.srcHash[srcStr] = 1);
+          _ref1 = srcStr.split(','), word = _ref1[0], num = _ref1[1];
+          num = num || 1;
+          if (typeof this.srcHash[word] === 'undefined') {
+            this.srcHash[word] = 0;
+          }
+          this.srcHash[word] += parseInt(num);
+          if (this.max < this.srcHash[word]) {
+            this.max = this.srcHash[word];
+          }
+          if (this.min > this.srcHash[word]) {
+            _results.push(this.min = this.srcHash[word]);
+          } else {
+            _results.push(void 0);
+          }
         }
       }
       return _results;
     };
 
     fitball.prototype.initDoms = function() {
-      var a, fragment, k, v, _ref;
+      var a, distance, fragment, k, scale, v, _ref;
       fragment = document.createDocumentFragment();
+      distance = this.max - this.min;
       _ref = this.srcHash;
       for (k in _ref) {
         v = _ref[k];
         a = document.createElement('a');
         a.innerHTML = k;
+        if (distance === 0) {
+          scale = 1;
+        } else {
+          scale = Math.sin(Math.PI / 6 + Math.PI * (v - this.min) / (3 * distance)) + 0.25;
+        }
+        a.scale = scale;
         fragment.appendChild(a);
       }
       this.vessel = document.getElementById('vessel');
+      this.vessel.innerHTML = '';
       return this.vessel.appendChild(fragment);
     };
 
     fitball.prototype.goRoll = function() {
-      var fits, i, length, mcList, si, stay, tag, _i,
+      var fits, i, length, mcList, stay, tag, _i,
         _this = this;
       this.fits = fits = this.vessel.getElementsByTagName('a');
       this.length = length = fits.length;
@@ -87,10 +126,10 @@
         _this.mouse.x = (e.clientX - (_this.vessel.offsetLeft + _this.vessel.offsetWidth / 2)) / 5;
         return _this.mouse.y = (e.clientY - (_this.vessel.offsetTop + _this.vessel.offsetHeight / 2)) / 5;
       };
-      si = setInterval(this.update, 30);
+      this.si = setInterval(this.update, 30);
       stay = false;
       return window.onkeyup = function(e) {
-        var kc;
+        var kc, si;
         e = window.event || e;
         kc = e.keyCode || e.keyCode;
         if (kc === 32) {
@@ -98,7 +137,7 @@
             si = setInterval(_this.update, 30);
             return stay = false;
           } else {
-            clearInterval(si);
+            clearInterval(_this.si);
             return stay = true;
           }
         }
@@ -202,7 +241,7 @@
       for (i = _i = 0, _ref = this.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
         this.fits[i].style.left = mcList[i].cx + l - mcList[i].offsetWidth / 2 + 'px';
         this.fits[i].style.top = mcList[i].cy + t - mcList[i].offsetHeight / 2 + 'px';
-        this.fits[i].style.fontSize = Math.ceil(12 * mcList[i].scale / 2) + 8 + 'px';
+        this.fits[i].style.fontSize = (Math.ceil(12 * mcList[i].scale / 2) + 8) * this.fits[i].scale + 'px';
         this.fits[i].style.filter = "alpha(opacity=" + 100 * mcList[i].alpha + ")";
         _results.push(this.fits[i].style.opacity = mcList[i].alpha);
       }
@@ -214,11 +253,10 @@
   })();
 
   window.onload = function() {
-    var gen;
+    var fb, gen;
+    fb = new fitball();
     gen = document.getElementById('gen');
     return gen.onclick = function() {
-      var fb;
-      fb = new fitball();
       return fb.roll();
     };
   };

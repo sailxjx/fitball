@@ -1,9 +1,9 @@
 class fitball
-  constructor: ->
+  init: ->
     @radius = 120
     @size = 250
     @tsSpeed = 10 # animate speed
-    @dtr = Math.PI/180
+    @dtr = Math.PI/180 # every degree
     @d = 300
     @elliptical = 1
     @srcHash = {}
@@ -17,10 +17,20 @@ class fitball
     @lasta = 1
     @lastb = 1
     @trigs = {}
+    @max = 0
+    @min = 10000
   roll: ->
+    @init()
     @readSrc()
     @initDoms()
+    @unbindEvents()
     @goRoll()
+  unbindEvents: ->
+    @vessel.onmouseover = null
+    @vessel.onmouseout = null
+    @vessel.onmousemove = null
+    window.onkeyup = null
+    clearInterval @si if typeof @si != 'undefined'
   readSrc: ->
     source = document.getElementById 'source'
     srcTxt = source.value
@@ -30,14 +40,23 @@ class fitball
       if srcStr == ""
         continue
       else
-        @srcHash[srcStr] = 1
+        [word, num] = srcStr.split ','
+        num = num || 1
+        @srcHash[word] = 0 if typeof @srcHash[word] == 'undefined'
+        @srcHash[word] += parseInt(num)
+        if @max < @srcHash[word] then @max = @srcHash[word]
+        if @min > @srcHash[word] then @min = @srcHash[word]
   initDoms: ->
     fragment = document.createDocumentFragment()
+    distance = @max - @min
     for k,v of @srcHash
       a = document.createElement 'a'
       a.innerHTML = k
+      if distance == 0 then scale = 1 else scale = Math.sin(Math.PI / 6 + Math.PI * (v - @min) / (3 * distance)) + 0.25
+      a.scale = scale
       fragment.appendChild a
     @vessel = document.getElementById 'vessel'
+    @vessel.innerHTML = ''
     @vessel.appendChild fragment
   goRoll: ->
     @fits = fits = @vessel.getElementsByTagName 'a'
@@ -57,17 +76,17 @@ class fitball
       e = window.event || e
       @mouse.x = (e.clientX - (@vessel.offsetLeft + @vessel.offsetWidth / 2)) / 5
       @mouse.y = (e.clientY - (@vessel.offsetTop + @vessel.offsetHeight / 2)) / 5
-    si = setInterval @update, 30
+    @si = setInterval @update, 30
     stay = false
     window.onkeyup = (e)=>
       e = window.event || e
       kc = e.keyCode || e.keyCode
-      if kc == 32
+      if kc == 32 #space key
         if stay
           si = setInterval @update, 30
           stay = false
         else
-          clearInterval(si)
+          clearInterval(@si)
           stay = true
   update: =>
     a = b = c = 0
@@ -144,11 +163,11 @@ class fitball
     for i in [0...@length]
       @fits[i].style.left = mcList[i].cx + l - mcList[i].offsetWidth / 2 + 'px'
       @fits[i].style.top = mcList[i].cy + t - mcList[i].offsetHeight / 2 + 'px'
-      @fits[i].style.fontSize = Math.ceil(12 * mcList[i].scale / 2) + 8 + 'px'
+      @fits[i].style.fontSize = (Math.ceil(12 * mcList[i].scale / 2) + 8) * @fits[i].scale + 'px'
       @fits[i].style.filter = "alpha(opacity=" + 100 * mcList[i].alpha + ")"
       @fits[i].style.opacity = mcList[i].alpha
 window.onload =->
+  fb = new fitball()
   gen =  document.getElementById 'gen'
   gen.onclick = ->
-    fb = new fitball()
     fb.roll()
