@@ -1,5 +1,6 @@
 body {
   background: #CCC;
+  font-family: Monaco;
   background: -webkit-gradient(radial, center center, 450, center center, 0, from(#cccccc), to(white)); }
 
 .vessel {
@@ -26,3 +27,12 @@ body {
   .handle .source {
     width: 99%;
     display: block; }
+  .handle .tip_line {
+    font-size: 14px;
+    padding: 0 0 0 10px;
+    opacity: 0.8; }
+  .handle code {
+    font-size: 14px;
+    background: #DDD;
+    border-radius: 3px;
+    padding: 2px; }
