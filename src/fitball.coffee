@@ -171,3 +171,4 @@ window.onload =->
   gen =  document.getElementById 'gen'
   gen.onclick = ->
     fb.roll()
+  gen.click()

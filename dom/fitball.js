@@ -256,9 +256,10 @@
     var fb, gen;
     fb = new fitball();
     gen = document.getElementById('gen');
-    return gen.onclick = function() {
+    gen.onclick = function() {
       return fb.roll();
     };
+    return gen.click();
   };
 
 }).call(this);
