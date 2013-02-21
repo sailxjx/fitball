@@ -31,6 +31,7 @@ class fitball
     @vessel.onmousemove = null
     window.onkeyup = null
     clearInterval @si if typeof @si != 'undefined'
+    return true
   readSrc: ->
     source = document.getElementById 'source'
     srcTxt = source.value
@@ -46,6 +47,7 @@ class fitball
         @srcHash[word] += parseInt(num)
         if @max < @srcHash[word] then @max = @srcHash[word]
         if @min > @srcHash[word] then @min = @srcHash[word]
+    return true
   initDoms: ->
     fragment = document.createDocumentFragment()
     distance = @max - @min
@@ -58,6 +60,7 @@ class fitball
     @vessel = document.getElementById 'vessel'
     @vessel.innerHTML = ''
     @vessel.appendChild fragment
+    return true
   goRoll: ->
     @fits = fits = @vessel.getElementsByTagName 'a'
     @length = length = fits.length
@@ -88,6 +91,7 @@ class fitball
         else
           clearInterval(@si)
           stay = true
+    return true
   update: =>
     a = b = c = 0
     mouse = @mouse
@@ -148,6 +152,7 @@ class fitball
       mcList[i].cz = radius * Math.cos(phi)
       @fits[i].style.left = mcList[i].cx + @vessel.offsetWidth / 2 - mcList[i].offsetWidth / 2 + "px"
       @fits[i].style.top = mcList[i].cy + @vessel.offsetHeight / 2 - mcList[i].offsetHeight / 2 + "px"
+    return true
   sineCosine: (a, b, c)->
     @trigs.sa = Math.sin(a * @dtr)
     @trigs.ca = Math.cos(a * @dtr)
@@ -155,7 +160,7 @@ class fitball
     @trigs.cb = Math.cos(b * @dtr)
     @trigs.sc = Math.sin(c * @dtr)
     @trigs.cc = Math.cos(c * @dtr)
-    @trigs
+    return @trigs
   doPos: ->
     l = @vessel.offsetWidth / 2
     t = @vessel.offsetHeight / 2
@@ -166,6 +171,7 @@ class fitball
       @fits[i].style.fontSize = (Math.ceil(12 * mcList[i].scale / 2) + 8) * @fits[i].scale + 'px'
       @fits[i].style.filter = "alpha(opacity=" + 100 * mcList[i].alpha + ")"
       @fits[i].style.opacity = mcList[i].alpha
+    return true
 window.onload =->
   fb = new fitball()
   gen =  document.getElementById 'gen'
