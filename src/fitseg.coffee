@@ -91,10 +91,28 @@ module.exports = class fitseg
       @fileData = @fileData.slice(subLen + endPunc.length)
   mkChunks: (subStr)->
     subLen = subStr.length
-    chunks = []
     chunkWords = []
-    # for i in [0...subLen]
-    #   for n in [i...subLen]
-    #     if subStr[i..n].length == 1 or subStr[i..n] in words
-    #       chunkWords.push subStr[i..n]
-    process.exit()
+    for i in [0...subLen]
+      for n in [i...subLen]
+        if subStr[i..n].length == 1 or subStr[i..n] in words
+          chunkWords[i] = [] if chunkWords[i] == undefined
+          chunkWords[i].push subStr[i..n]
+
+    chunks = []
+    for i in [0...chunkWords[0].length]
+      chunks[i] = [] if chunks[i] == undefined
+      chunks[i].push chunkWords[0][i]
+
+    # thanks to great master kinpoo (https://github.com/kinpoo)
+    for i in [1...chunkWords.length]
+      for n in [0...chunks.length]
+        if chunks[n].join('').length > i
+          continue
+        tmp = [].concat(chunks[n])
+        chunks[n].push chunkWords[i][0]
+        for j in [1...chunkWords[i].length]
+          tmp2 = [].concat(tmp)
+          tmp2.push chunkWords[i][j]
+          chunks.push tmp2
+
+    return chunks
