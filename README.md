@@ -8,3 +8,8 @@
 * add diffrent font size (done)
 * add img|dom download button
 * add word seg functions
+
+##Segment
+* four rules of [mmseg](http://technology.chtsai.org/mmseg/)
+* substr, split by punctuations in positive direction
+* make chunks in positive direction
