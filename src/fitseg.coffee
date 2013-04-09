@@ -56,10 +56,22 @@ class lsdmfocwRule extends rule
   filter: ->
 
 class chunk
-
+  eles: []
+  pos: 0
+  constructor: (num)->
+    @num = num
+  push: (ele, pos)->
+    if pos != @pos
+      return false
+    if @eles.length < @num
+      @eles.push ele
+      @pos += ele.length
+      return true
+    return false
 
 module.exports = class fitseg
   step: 10
+  cNum: 3 # chunk numbers
   fileData: ''
   wordArr: []
   punctuations: ',./><?;:\'"`~!@#^&*()-=+，。、《》？；’：”·！…（）\n'
@@ -72,47 +84,36 @@ module.exports = class fitseg
         @fileData = d.toString()
         @analyse()
   analyse: ->
-    while @fileData.length > 0
-      subStr = @fileData[0...@step]
-      subLen = subStr.length
-      endPunc = ""
-      for i in [0...subLen]
-        if subStr[i] in @punctuations
-          endPunc = subStr[i]  # log punctuation
-          subStr = subStr[0...i]
-          subLen = subStr.length
-          break
-      chunks = @mkChunks(subStr)
-      for rule in @ruleList
-        oRule = new rule(subStr)
-        chunks = oRule.filter()
-      @wordArr.push subStr if subLen > 0
-      @wordArr.push endPunc if endPunc.length > 0
-      @fileData = @fileData.slice(subLen + endPunc.length)
-  mkChunks: (subStr)->
-    subLen = subStr.length
-    chunkWords = []
-    for i in [0...subLen]
-      for n in [i...subLen]
-        if subStr[i..n].length == 1 or subStr[i..n] in words
-          chunkWords[i] = [] if chunkWords[i] == undefined
-          chunkWords[i].push subStr[i..n]
+    fileData = @fileData
+    maxWordDepth = 3
+    chunkCompare = (chunkList)=>  # compare chunks in the list, and finally return the chunk imploded length
+      return 2
+    while fileLen = fileData.length > 0
 
-    chunks = []
-    for i in [0...chunkWords[0].length]
-      chunks[i] = [] if chunks[i] == undefined
-      chunks[i].push chunkWords[0][i]
+      chunkList = []
+      for i in [maxWordDepth...0]
+        if fileData[i-1] in @punctuations  # if there is a punctuation in the piece of data, drop out the formor chunklist data
+          chunkList = []
+        if fileData[0...i] in words
+          oChunk = new chunk(3)
+          oChunk.push(fileData[0...i], 0)
+          chunkList.push oChunk
+      oChunk = new chunk(3)
+      oChunk.push(fileData[0], 0)
+      chunkList.push oChunk
 
-    # thanks to great master kinpoo (https://github.com/kinpoo)
-    for i in [1...chunkWords.length]
-      for n in [0...chunks.length]
-        if chunks[n].join('').length > i
-          continue
-        tmp = [].concat(chunks[n])
-        chunks[n].push chunkWords[i][0]
-        for j in [1...chunkWords[i].length]
-          tmp2 = [].concat(tmp)
-          tmp2.push chunkWords[i][j]
-          chunks.push tmp2
+      for oChunk in chunkList
+        chunkListTmp = []
+        fromIdx = oChunk.pos + maxWordDepth
+        toIdx = oChunk.pos
+        for i in [fromIdx...toIdx]
+          if fileData[i-1] in @punctuations
+            chunkListTmp = []
+          if fileData[toIdx...i] in words
+            oChunkCopy = 
+            # ...
 
-    return chunks
+      console.log chunkList
+      process.exit()
+
+      fileData = fileData.slice(chunkCompare(chunkList))

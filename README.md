@@ -10,6 +10,7 @@
 * add word seg functions
 
 ##Segment
+###This is stuck by some reason, maybe I should think differently...
 * four rules of [mmseg](http://technology.chtsai.org/mmseg/)
 * substr, split by punctuations in positive direction
 * make chunks in positive direction
